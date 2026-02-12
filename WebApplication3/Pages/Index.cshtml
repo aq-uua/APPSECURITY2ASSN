@@ -1,0 +1,225 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="market-hero">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <p class="market-eyebrow">Today at the market</p>
+                <h1 class="market-title">Fresh harvests, curated for your week.</h1>
+                <p class="market-subtitle">Shop seasonal produce, pasture-raised proteins, and small-batch pantry goods. Built for weekly baskets and quick add-ons.</p>
+                <div class="market-actions">
+                    <a href="#seasonal" class="btn btn-primary btn-lg">Shop seasonal picks</a>
+                    <a href="#bundles" class="btn btn-outline btn-lg">Build a box</a>
+                </div>
+                <div class="market-meta">
+                    <div class="market-meta-item">
+                        <span class="market-meta-label">Next delivery</span>
+                        <strong>Saturday 8–11 AM</strong>
+                    </div>
+                    <div class="market-meta-item">
+                        <span class="market-meta-label">Pickup</span>
+                        <strong>Harbor Farm Depot</strong>
+                    </div>
+                    <div class="market-meta-item">
+                        <span class="market-meta-label">Minimum order</span>
+                        <strong>$35</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="market-hero-panel">
+                    <div class="market-badge">Harvest board</div>
+                    <div class="market-hero-grid">
+                        <div class="market-tile market-tile-sage">
+                            <span>Leafy greens</span>
+                            <strong>Spinach • Kale • Chard</strong>
+                        </div>
+                        <div class="market-tile market-tile-cream">
+                            <span>Root cellar</span>
+                            <strong>Carrots • Beets • Sweet potato</strong>
+                        </div>
+                        <div class="market-tile market-tile-terracotta">
+                            <span>Proteins</span>
+                            <strong>Free-range chicken • Grass-fed beef</strong>
+                        </div>
+                        <div class="market-tile market-tile-forest">
+                            <span>Pantry</span>
+                            <strong>Raw honey • Sourdough • Herb oils</strong>
+                        </div>
+                    </div>
+                    <div class="market-hero-foot">
+                        <div>
+                            <strong>40+ local producers</strong>
+                            <span>Rotating weekly selection</span>
+                        </div>
+                        <button class="btn btn-secondary">View all vendors</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="market-categories" id="seasonal">
+    <div class="container">
+        <div class="market-section-head">
+            <div>
+                <h2>Seasonal market picks</h2>
+                <p class="text-muted">Limited quantities, harvested within 24 hours.</p>
+            </div>
+            <div class="market-chip-row">
+                <span class="market-chip">All</span>
+                <span class="market-chip">Produce</span>
+                <span class="market-chip">Proteins</span>
+                <span class="market-chip">Dairy</span>
+                <span class="market-chip">Pantry</span>
+            </div>
+        </div>
+        <div class="market-grid">
+            <article class="market-card">
+                <div class="market-card-tag">New</div>
+                <h3>Heirloom tomato flight</h3>
+                <p>Sun-gold, Cherokee purple, and striped Roma.</p>
+                <div class="market-card-footer">
+                    <strong>$7.50 / lb</strong>
+                    <button class="btn btn-primary btn-sm">Add</button>
+                </div>
+            </article>
+            <article class="market-card">
+                <div class="market-card-tag">Limited</div>
+                <h3>Wildflower eggs</h3>
+                <p>24 eggs, pasture-raised with seasonal forage.</p>
+                <div class="market-card-footer">
+                    <strong>$9.00</strong>
+                    <button class="btn btn-primary btn-sm">Add</button>
+                </div>
+            </article>
+            <article class="market-card">
+                <div class="market-card-tag">Best seller</div>
+                <h3>Market greens mix</h3>
+                <p>Baby lettuce, arugula, and tender herbs.</p>
+                <div class="market-card-footer">
+                    <strong>$5.25</strong>
+                    <button class="btn btn-primary btn-sm">Add</button>
+                </div>
+            </article>
+            <article class="market-card">
+                <div class="market-card-tag">Farmstead</div>
+                <h3>Raw milk bundle</h3>
+                <p>Whole milk + cultured butter from Meadow Lane.</p>
+                <div class="market-card-footer">
+                    <strong>$14.00</strong>
+                    <button class="btn btn-primary btn-sm">Add</button>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="market-bundles" id="bundles">
+    <div class="container">
+        <div class="market-section-head">
+            <div>
+                <h2>Curated farm boxes</h2>
+                <p class="text-muted">Balanced selections built for the week ahead.</p>
+            </div>
+            <a href="#" class="market-link">See all boxes</a>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="bundle-card">
+                    <div class="bundle-head">
+                        <h3>Harvest starter</h3>
+                        <p>6-8 produce items, pantry staple, seasonal treat.</p>
+                    </div>
+                    <ul>
+                        <li>3 leafy greens</li>
+                        <li>2 root vegetables</li>
+                        <li>1 fresh herb bundle</li>
+                        <li>Pantry surprise</li>
+                    </ul>
+                    <div class="bundle-foot">
+                        <strong>$29.00</strong>
+                        <button class="btn btn-outline btn-sm">Customize</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bundle-card bundle-featured">
+                    <div class="bundle-head">
+                        <span class="bundle-pill">Most popular</span>
+                        <h3>Family table</h3>
+                        <p>Produce + protein + dairy essentials.</p>
+                    </div>
+                    <ul>
+                        <li>5 produce staples</li>
+                        <li>2 protein selections</li>
+                        <li>Eggs or dairy add-on</li>
+                        <li>Fresh bread</li>
+                    </ul>
+                    <div class="bundle-foot">
+                        <strong>$52.00</strong>
+                        <button class="btn btn-primary btn-sm">Add box</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bundle-card">
+                    <div class="bundle-head">
+                        <h3>Chef's pantry</h3>
+                        <p>Specialty items, herbs, and artisan pantry.</p>
+                    </div>
+                    <ul>
+                        <li>Seasonal specialty greens</li>
+                        <li>Herb bouquet</li>
+                        <li>Small-batch oil or honey</li>
+                        <li>Artisan loaf</li>
+                    </ul>
+                    <div class="bundle-foot">
+                        <strong>$39.00</strong>
+                        <button class="btn btn-outline btn-sm">Customize</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="market-vendors">
+    <div class="container">
+        <div class="market-section-head">
+            <div>
+                <h2>Meet the growers</h2>
+                <p class="text-muted">Small farms, transparent sourcing, direct delivery.</p>
+            </div>
+            <a href="#" class="market-link">Explore vendors</a>
+        </div>
+        <div class="vendor-row">
+            <div class="vendor-card">
+                <div class="vendor-avatar">🌿</div>
+                <div>
+                    <h4>Green Hollow Farm</h4>
+                    <p>Organic greens, salad mixes, herbs.</p>
+                </div>
+            </div>
+            <div class="vendor-card">
+                <div class="vendor-avatar">🥛</div>
+                <div>
+                    <h4>Meadow Lane Dairy</h4>
+                    <p>Raw milk, cultured butter, seasonal cheese.</p>
+                </div>
+            </div>
+            <div class="vendor-card">
+                <div class="vendor-avatar">🍯</div>
+                <div>
+                    <h4>Stonebridge Apiary</h4>
+                    <p>Wildflower honey + pollinator blends.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

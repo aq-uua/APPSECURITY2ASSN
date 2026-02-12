@@ -1,0 +1,93 @@
+@page
+@model WebApplication3.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="py-5 mb-5" style="background: linear-gradient(135deg, var(--color-terracotta) 0%, var(--color-terracotta-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="text-white mb-2">Welcome Back</h1>
+        <p class="mb-0 opacity-75">Sign in to access your farm fresh account</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4 p-md-5">
+                    @if (TempData["StatusMessage"] is string statusMessage && !string.IsNullOrWhiteSpace(statusMessage))
+                    {
+                        <div class="alert alert-warning" role="alert">@statusMessage</div>
+                    }
+                    <div class="text-center mb-4">
+                        <div class="fs-1 mb-2">🌾</div>
+                        <h3>Sign In</h3>
+                        <p class="text-muted small">Enter your credentials to continue</p>
+                    </div>
+
+                    <form method="post" id="loginForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="LModel.Email">Email Address</label>
+                            <input type="email" asp-for="LModel.Email" class="form-control" placeholder="Enter your email" />
+                            <span asp-validation-for="LModel.Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="LModel.Password">Password</label>
+                            <input type="password" asp-for="LModel.Password" class="form-control" placeholder="Enter your password" />
+                            <span asp-validation-for="LModel.Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" asp-for="LModel.RememberMe" class="form-check-input" id="rememberMe" />
+                            <label class="form-check-label" asp-for="LModel.RememberMe" for="rememberMe">Remember Me?</label>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+                        </div>
+
+                        <input type="hidden" asp-for="LModel.RecaptchaToken" id="loginRecaptchaToken" />
+
+                        <div class="text-center">
+                            <p class="mb-2">Don't have an account? <a href="/Register" class="text-terracotta">Register here</a></p>
+                            <a href="/ForgotPassword" class="text-muted small">Forgot your password?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (Model.RecaptchaEnabled)
+    {
+        <script src="https://www.google.com/recaptcha/api.js?render=@Model.RecaptchaSiteKey"></script>
+        <script>
+            (function () {
+                const form = document.getElementById('loginForm');
+                if (!form || typeof grecaptcha === 'undefined') {
+                    return;
+                }
+
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    grecaptcha.ready(function () {
+                        grecaptcha.execute('@Model.RecaptchaSiteKey', { action: 'login' }).then(function (token) {
+                            const field = document.getElementById('loginRecaptchaToken');
+                            if (field) {
+                                field.value = token;
+                            }
+                            form.submit();
+                        });
+                    });
+                });
+            })();
+        </script>
+    }
+}

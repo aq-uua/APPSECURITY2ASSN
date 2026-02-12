@@ -1,0 +1,54 @@
+@page
+@model WebApplication3.Pages.VerifyEmailModel
+@{
+    ViewData["Title"] = "Verify Email";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-sm-12 col-md-12 col-lg-6">
+            @if (Model.IsSuccess)
+            {
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">Email Verified!</h4>
+                    <p>Your email has been successfully verified. You can now log in to your account.</p>
+                    <hr>
+                    <a href="/Login" class="btn btn-primary">Go to Login</a>
+                </div>
+            }
+            else if (Model.IsError)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Verification Failed</h4>
+                    <p>@Model.ErrorMessage</p>
+                    <hr>
+                    <a href="/Register" class="btn btn-secondary">Register Again</a>
+                </div>
+            }
+            else
+            {
+                <div class="text-center">
+                    <h1 class="mb-4">Verify Your Email</h1>
+                    <p class="lead">We've sent a verification email to <strong>@Model.Email</strong></p>
+                    <p>Please check your inbox and click the verification link to activate your account.</p>
+                    <p class="text-muted">The verification link will expire in 24 hours.</p>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Email) && !string.IsNullOrEmpty(Model.Token))
+                    {
+                        <hr class="my-4">
+                        <p>Or you can verify your email here:</p>
+                        <form method="post">
+                            <input type="hidden" name="email" value="@Model.Email" />
+                            <input type="hidden" name="token" value="@Model.Token" />
+                            <button type="submit" class="btn btn-success btn-lg">Verify My Email</button>
+                        </form>
+                    }
+                    
+                    <hr class="my-4">
+                    <p class="text-muted">Didn't receive the email?</p>
+                    <a href="#" class="btn btn-outline-secondary">Resend Verification Email</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

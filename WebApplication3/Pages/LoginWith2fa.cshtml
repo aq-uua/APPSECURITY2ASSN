@@ -1,0 +1,44 @@
+@page
+@model WebApplication3.Pages.LoginWith2faModel
+@{
+    ViewData["Title"] = "Two-Factor Verification";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="mb-3">Enter verification code</h2>
+                    <p class="text-muted">We sent a one-time code to your email. Enter it below to continue.</p>
+
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Code" class="form-label"></label>
+                            <input asp-for="Input.Code" class="form-control" autocomplete="one-time-code" />
+                            <span asp-validation-for="Input.Code" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input asp-for="Input.RememberMachine" class="form-check-input" />
+                            <label asp-for="Input.RememberMachine" class="form-check-label">Remember this device</label>
+                        </div>
+
+                        <input type="hidden" asp-for="Input.RememberMe" />
+                        <input type="hidden" asp-for="ReturnUrl" />
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Verify</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

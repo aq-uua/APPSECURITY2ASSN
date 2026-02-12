@@ -1,0 +1,201 @@
+@page
+@model WebApplication3.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="py-5 mb-5" style="background: linear-gradient(135deg, var(--color-sage) 0%, var(--color-forest) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="text-white mb-2">Join Our Farm Family</h1>
+        <p class="mb-0 opacity-75">Create an account to access fresh, sustainable produce</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4 p-md-5">
+
+            <form method="post" enctype="multipart/form-data" id="registerForm">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="RModel.FullName">Full Name</label>
+                            <input type="text" asp-for="RModel.FullName" class="form-control" placeholder="Enter your full name" />
+                            <span asp-validation-for="RModel.FullName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="RModel.Email">Email Address</label>
+                            <input type="email" asp-for="RModel.Email" class="form-control" placeholder="Enter your email" />
+                            <span asp-validation-for="RModel.Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="RModel.Password">Password</label>
+                            <input type="password" asp-for="RModel.Password" class="form-control" id="passwordInput" placeholder="Minimum 12 characters" />
+                            <span asp-validation-for="RModel.Password" class="text-danger"></span>
+                            <div class="mt-2">
+                                <div class="progress" style="height: 5px;">
+                                    <div id="passwordStrength" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small id="passwordRequirements" class="text-muted">
+                                    Password must have: 12+ chars, uppercase, lowercase, number, special char
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="RModel.ConfirmPassword">Confirm Password</label>
+                            <input type="password" asp-for="RModel.ConfirmPassword" class="form-control" placeholder="Confirm your password" />
+                            <span asp-validation-for="RModel.ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="RModel.Gender">Gender</label>
+                            <select asp-for="RModel.Gender" class="form-select">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                                <option value="PreferNotToSay">Prefer not to say</option>
+                            </select>
+                            <span asp-validation-for="RModel.Gender" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="RModel.MobileNumber">Mobile Number</label>
+                            <input type="tel" asp-for="RModel.MobileNumber" class="form-control" placeholder="Enter your mobile number" />
+                            <span asp-validation-for="RModel.MobileNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" asp-for="RModel.DeliveryAddress">Delivery Address</label>
+                    <textarea asp-for="RModel.DeliveryAddress" class="form-control" rows="3" placeholder="Enter your delivery address"></textarea>
+                    <span asp-validation-for="RModel.DeliveryAddress" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" asp-for="RModel.CreditCard">Credit Card Number</label>
+                    <input type="text" asp-for="RModel.CreditCard" class="form-control" placeholder="Enter your credit card number (encrypted storage)" />
+                    <span asp-validation-for="RModel.CreditCard" class="text-danger"></span>
+                    <small class="text-muted">Your credit card information will be encrypted and stored securely.</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" asp-for="RModel.AboutMe">About Me</label>
+                    <textarea asp-for="RModel.AboutMe" class="form-control" rows="3" placeholder="Tell us about yourself (special characters allowed)"></textarea>
+                    <span asp-validation-for="RModel.AboutMe" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" asp-for="RModel.Photo">Profile Photo</label>
+                    <input type="file" asp-for="RModel.Photo" class="form-control" accept=".jpg,.jpeg" />
+                    <span asp-validation-for="RModel.Photo" class="text-danger"></span>
+                    <small class="text-muted">Only JPG files are allowed. Maximum file size: 5MB.</small>
+                </div>
+
+                <div class="mb-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                </div>
+
+                <input type="hidden" asp-for="RModel.RecaptchaToken" id="registerRecaptchaToken" />
+
+                <div class="mb-3 text-center">
+                    <p class="mb-0">Already have an account? <a href="/Login" class="text-terracotta">Sign in here</a></p>
+                </div>
+            </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (Model.RecaptchaEnabled)
+    {
+        <script src="https://www.google.com/recaptcha/api.js?render=@Model.RecaptchaSiteKey"></script>
+        <script>
+            (function () {
+                const form = document.getElementById('registerForm');
+                if (!form || typeof grecaptcha === 'undefined') {
+                    return;
+                }
+
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    grecaptcha.ready(function () {
+                        grecaptcha.execute('@Model.RecaptchaSiteKey', { action: 'register' }).then(function (token) {
+                            const field = document.getElementById('registerRecaptchaToken');
+                            if (field) {
+                                field.value = token;
+                            }
+                            form.submit();
+                        });
+                    });
+                });
+            })();
+        </script>
+    }
+    <script>
+        document.getElementById('passwordInput').addEventListener('input', function() {
+            const password = this.value;
+            const strengthBar = document.getElementById('passwordStrength');
+            const requirements = document.getElementById('passwordRequirements');
+            
+            let strength = 0;
+            const checks = {
+                length: password.length >= 12,
+                lowercase: /[a-z]/.test(password),
+                uppercase: /[A-Z]/.test(password),
+                number: /\d/.test(password),
+                special: /[@@$!%*?&]/.test(password)
+            };
+
+            strength = Object.values(checks).filter(Boolean).length;
+            
+            const percentage = (strength / 5) * 100;
+            strengthBar.style.width = percentage + '%';
+            
+            if (strength <= 2) {
+                strengthBar.className = 'progress-bar bg-danger';
+            } else if (strength <= 4) {
+                strengthBar.className = 'progress-bar bg-warning';
+            } else {
+                strengthBar.className = 'progress-bar bg-success';
+            }
+
+            let missing = [];
+            if (!checks.length) missing.push('12+ characters');
+            if (!checks.lowercase) missing.push('lowercase letter');
+            if (!checks.uppercase) missing.push('uppercase letter');
+            if (!checks.number) missing.push('number');
+            if (!checks.special) missing.push('special character');
+
+            if (missing.length > 0) {
+                requirements.innerHTML = 'Missing: ' + missing.join(', ');
+                requirements.className = 'text-danger';
+            } else {
+                requirements.innerHTML = 'Password meets all requirements!';
+                requirements.className = 'text-success';
+            }
+        });
+    </script>
+}
