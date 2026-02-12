@@ -14,15 +14,18 @@ public class TwoFactorModel : PageModel
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RecoverySettings _recoverySettings;
     private readonly IAuditLogger _auditLogger;
+    private readonly IRecoveryCodeService _recoveryCodeService;
 
     public TwoFactorModel(
         UserManager<ApplicationUser> userManager,
         IOptions<RecoverySettings> recoverySettings,
-        IAuditLogger auditLogger)
+        IAuditLogger auditLogger,
+        IRecoveryCodeService recoveryCodeService)
     {
         _userManager = userManager;
         _recoverySettings = recoverySettings.Value;
         _auditLogger = auditLogger;
+        _recoveryCodeService = recoveryCodeService;
     }
 
     public bool IsEnabled { get; private set; }
@@ -96,8 +99,9 @@ public class TwoFactorModel : PageModel
             return Page();
         }
 
-        var codes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, _recoverySettings.RecoveryCodeCount);
-        RecoveryCodes = (codes ?? Array.Empty<string>()).ToArray();
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var codes = await _recoveryCodeService.GenerateCodesAsync(user.Id, _recoverySettings.RecoveryCodeCount, ipAddress);
+        RecoveryCodes = codes;
 
         await _auditLogger.LogAuthEventAsync(
             user.Id,

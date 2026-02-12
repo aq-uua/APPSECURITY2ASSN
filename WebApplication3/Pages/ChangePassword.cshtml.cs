@@ -59,12 +59,12 @@ public class ChangePasswordModel : PageModel
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
         var userAgent = Request.Headers.UserAgent.ToString();
 
-        if (user.PasswordLastChangedAt.HasValue && _settings.MinPasswordAgeDays > 0)
+        if (user.PasswordLastChangedAt.HasValue && _settings.MinPasswordAgeMinutes > 0)
         {
-            var minChangeDate = user.PasswordLastChangedAt.Value.AddDays(_settings.MinPasswordAgeDays);
+            var minChangeDate = user.PasswordLastChangedAt.Value.AddMinutes(_settings.MinPasswordAgeMinutes);
             if (DateTime.UtcNow < minChangeDate)
             {
-                ModelState.AddModelError("", "You cannot change your password yet. Please try again later.");
+                ModelState.AddModelError("", "Password created is too recent to be changed, please wait before changing again.");
                 await _auditLogger.LogAuthEventAsync(user.Id, AuditEventType.PasswordChangeFailed, "Minimum password age not met", ipAddress, userAgent);
                 return Page();
             }
@@ -105,10 +105,6 @@ public class ChangePasswordModel : PageModel
         }
 
         user.PasswordLastChangedAt = DateTime.UtcNow;
-        if (_settings.MaxPasswordAgeDays > 0)
-        {
-            user.PasswordExpiresAt = DateTime.UtcNow.AddDays(_settings.MaxPasswordAgeDays);
-        }
 
         var updateResult = await _userManager.UpdateAsync(user);
         if (!updateResult.Succeeded)

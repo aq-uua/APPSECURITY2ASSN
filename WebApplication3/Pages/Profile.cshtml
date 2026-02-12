@@ -10,6 +10,13 @@
         {
             <div class="alert alert-success mb-4" role="alert">@Model.StatusMessage</div>
         }
+        @if (Model.ShowPasswordExpiryAlert)
+        {
+            <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                <strong>Password aging notice:</strong> Your password is nearing expiry. Please <a href="/ChangePassword" class="alert-link">change your password</a> to keep your account secure.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
         <div class="profile-hero-card">
             <div class="profile-avatar">
                 @if (!string.IsNullOrWhiteSpace(Model.Photo.PhotoUrl))

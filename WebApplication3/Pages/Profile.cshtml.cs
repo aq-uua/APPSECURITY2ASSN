@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApplication3.Model;
+using Microsoft.Extensions.Options;
 using WebApplication3.Services;
 using WebApplication3.ViewModels;
 
@@ -16,20 +17,26 @@ public class ProfileModel : PageModel
     private readonly IWebHostEnvironment _environment;
     private readonly IEncryptionService _encryptionService;
     private readonly IAuditLogger _auditLogger;
+    private readonly IRecoveryCodeService _recoveryCodeService;
     private readonly ILogger<ProfileModel> _logger;
+    private readonly PasswordPolicySettings _passwordPolicy;
 
     public ProfileModel(
         UserManager<ApplicationUser> userManager,
         IWebHostEnvironment environment,
         IEncryptionService encryptionService,
         IAuditLogger auditLogger,
-        ILogger<ProfileModel> logger)
+        IRecoveryCodeService recoveryCodeService,
+        ILogger<ProfileModel> logger,
+        IOptions<PasswordPolicySettings> passwordPolicy)
     {
         _userManager = userManager;
         _environment = environment;
         _encryptionService = encryptionService;
         _auditLogger = auditLogger;
+        _recoveryCodeService = recoveryCodeService;
         _logger = logger;
+        _passwordPolicy = passwordPolicy.Value;
     }
 
     [BindProperty]
@@ -47,6 +54,7 @@ public class ProfileModel : PageModel
     public string Email { get; private set; } = string.Empty;
     public bool IsTwoFactorEnabled { get; private set; }
     public string[]? RecoveryCodes { get; private set; }
+    public bool ShowPasswordExpiryAlert { get; private set; }
 
     [TempData]
     public string? StatusMessage { get; set; }
@@ -60,6 +68,7 @@ public class ProfileModel : PageModel
         }
 
         await LoadAsync(user);
+        ShowPasswordExpiryAlert = _passwordPolicy.IsPasswordNearExpiry(user.PasswordLastChangedAt);
         return Page();
     }
 
@@ -350,8 +359,9 @@ public class ProfileModel : PageModel
             return Page();
         }
 
-        var codes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 8);
-        RecoveryCodes = (codes ?? Array.Empty<string>()).ToArray();
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var codes = await _recoveryCodeService.GenerateCodesAsync(user.Id, 8, ipAddress);
+        RecoveryCodes = codes;
 
         await _auditLogger.LogAuthEventAsync(
             user.Id,

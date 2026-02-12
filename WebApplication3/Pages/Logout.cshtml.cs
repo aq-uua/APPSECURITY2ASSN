@@ -26,7 +26,7 @@ public class LogoutModel : PageModel
 
     public async Task<IActionResult> OnPostLogoutAsync()
     {
-        var userId = User?.Identity?.Name ?? "anonymous";
+        var userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
         var userAgent = Request.Headers.UserAgent.ToString();
 

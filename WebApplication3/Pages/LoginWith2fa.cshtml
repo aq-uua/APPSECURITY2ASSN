@@ -12,6 +12,11 @@
                     <h2 class="mb-3">Enter verification code</h2>
                     <p class="text-muted">We sent a one-time code to your email. Enter it below to continue.</p>
 
+                    @if (Model.StatusMessage != null)
+                    {
+                        <div class="alert alert-success" role="alert">@Model.StatusMessage</div>
+                    }
+
                     <form method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -29,10 +34,31 @@
                         <input type="hidden" asp-for="Input.RememberMe" />
                         <input type="hidden" asp-for="ReturnUrl" />
 
-                        <div class="d-grid">
+                        <div class="d-grid mb-3">
                             <button type="submit" class="btn btn-primary">Verify</button>
                         </div>
                     </form>
+
+                    <form method="post" asp-page-handler="ResendCode" class="mb-3">
+                        <input type="hidden" asp-for="Input.RememberMe" />
+                        <input type="hidden" asp-for="ReturnUrl" />
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-outline-secondary" id="resendButton" @(Model.CanResend ? "" : "disabled")>
+                                @if (Model.CanResend)
+                                {
+                                    <span>Resend code</span>
+                                }
+                                else
+                                {
+                                    <span>Resend available in <span id="countdown">@Model.SecondsRemaining</span>s</span>
+                                }
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center">
+                        <a href="/LoginWithRecoveryCode?rememberMe=@Model.Input.RememberMe&rememberMachine=@Model.Input.RememberMachine&returnUrl=@System.Net.WebUtility.UrlEncode(Model.ReturnUrl)" class="text-muted small">Use recovery code instead</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -41,4 +67,27 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    @if (!Model.CanResend)
+    {
+        <script>
+            (function() {
+                var seconds = @Model.SecondsRemaining;
+                var countdownEl = document.getElementById('countdown');
+                var button = document.getElementById('resendButton');
+                
+                var timer = setInterval(function() {
+                    seconds--;
+                    if (countdownEl) countdownEl.textContent = seconds;
+                    
+                    if (seconds <= 0) {
+                        clearInterval(timer);
+                        if (button) {
+                            button.disabled = false;
+                            button.innerHTML = '<span>Resend code</span>';
+                        }
+                    }
+                }, 1000);
+            })();
+        </script>
+    }
 }

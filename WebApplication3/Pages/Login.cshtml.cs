@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Options;
 using WebApplication3.Model;
 using WebApplication3.Services;
 using WebApplication3.ViewModels;
@@ -19,6 +20,7 @@ namespace WebApplication3.Pages
         private readonly ISessionManager _sessionManager;
         private readonly IRecaptchaVerifier _recaptchaVerifier;
         private readonly RecaptchaSettings _recaptchaSettings;
+        private readonly PasswordPolicySettings _passwordPolicy;
 
         public LoginModel(
             SignInManager<ApplicationUser> signInManager,
@@ -27,7 +29,8 @@ namespace WebApplication3.Pages
             IAuditLogger auditLogger,
             ISessionManager sessionManager,
             IRecaptchaVerifier recaptchaVerifier,
-            Microsoft.Extensions.Options.IOptions<RecaptchaSettings> recaptchaSettings)
+            IOptions<RecaptchaSettings> recaptchaSettings,
+            IOptions<PasswordPolicySettings> passwordPolicy)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -36,6 +39,7 @@ namespace WebApplication3.Pages
             _sessionManager = sessionManager;
             _recaptchaVerifier = recaptchaVerifier;
             _recaptchaSettings = recaptchaSettings.Value;
+            _passwordPolicy = passwordPolicy.Value;
         }
 
         public string RecaptchaSiteKey => _recaptchaSettings.SiteKey;
@@ -79,7 +83,7 @@ namespace WebApplication3.Pages
             if (user == null)
             {
                 await _auditLogger.LogAuthEventAsync(
-                    email,
+                    null,
                     AuditEventType.LoginFailure,
                     "User not found",
                     ipAddress,
@@ -87,6 +91,11 @@ namespace WebApplication3.Pages
                 
                 ModelState.AddModelError("", "Invalid login attempt.");
                 return Page();
+            }
+
+            if (await _userManager.GetTwoFactorEnabledAsync(user))
+            {
+                await _signInManager.ForgetTwoFactorClientAsync();
             }
 
             if (!user.EmailConfirmed || !user.EmailVerified)
@@ -108,6 +117,11 @@ namespace WebApplication3.Pages
                 LModel.RememberMe,
                 lockoutOnFailure: true);
 
+            if (result.RequiresTwoFactor)
+            {
+                return RedirectToPage("./LoginWith2fa", new { ReturnUrl = "~/", RememberMe = LModel.RememberMe });
+            }
+
             if (result.Succeeded)
             {
                 _logger.LogInformation("User logged in: {Email}", email);
@@ -127,7 +141,7 @@ namespace WebApplication3.Pages
 
                 HttpContext.Session.SetString("AuthSessionId", session.Id.ToString());
 
-                if (user.PasswordExpiresAt.HasValue && user.PasswordExpiresAt.Value <= DateTime.UtcNow)
+                if (_passwordPolicy.IsPasswordExpired(user.PasswordLastChangedAt))
                 {
                     await _auditLogger.LogAuthEventAsync(
                         user.Id,
@@ -141,11 +155,6 @@ namespace WebApplication3.Pages
                 }
 
                 return RedirectToPage("Index");
-            }
-
-            if (result.RequiresTwoFactor)
-            {
-                return RedirectToPage("./LoginWith2fa", new { ReturnUrl = "~/", RememberMe = LModel.RememberMe });
             }
 
             if (result.IsLockedOut)

@@ -15,6 +15,7 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<AuthSession> AuthSessions { get; set; } = null!;
     public DbSet<AuditLog> AuditLogs { get; set; } = null!;
     public DbSet<PasswordHistory> PasswordHistories { get; set; } = null!;
+    public DbSet<RecoveryCode> RecoveryCodes { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -109,6 +110,28 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasIndex(e => new { e.UserId, e.CreatedAt });
 
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // RecoveryCode configuration
+        builder.Entity<RecoveryCode>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.CodeHash).HasMaxLength(256).IsRequired();
+            entity.Property(e => e.UserId).HasMaxLength(450).IsRequired();
+            entity.Property(e => e.UsedFromIp).HasMaxLength(50);
+            entity.Property(e => e.CreatedAt).IsRequired();
+            entity.Property(e => e.IsUsed).IsRequired().HasDefaultValue(false);
+            
+            // Index for fast lookup by user and unused status
+            entity.HasIndex(e => new { e.UserId, e.IsUsed });
+            
+            // Index for code validation
+            entity.HasIndex(e => new { e.UserId, e.CodeHash, e.IsUsed });
+            
             entity.HasOne(e => e.User)
                 .WithMany()
                 .HasForeignKey(e => e.UserId)

@@ -15,6 +15,23 @@ public class AuditLogger : IAuditLogger
         _logger = logger;
     }
 
+    /// <summary>
+    /// Sanitizes input to prevent log injection attacks by removing control characters.
+    /// </summary>
+    private static string SanitizeForLogging(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input ?? "null";
+
+        // Remove control characters, newlines, carriage returns, null bytes, and tabs
+        // that could be used for log injection attacks
+        return input
+            .Replace("\n", "")
+            .Replace("\r", "")
+            .Replace("\0", "")
+            .Replace("\t", " ");
+    }
+
     public async Task LogAuthEventAsync(
         string? userId,
         AuditEventType eventType,
@@ -62,12 +79,12 @@ public class AuditLogger : IAuditLogger
 
             _logger.LogInformation(
                 "Audit event logged: {EventType} for user {UserId}",
-                eventType,
-                userId ?? "anonymous");
+                SanitizeForLogging(eventType.ToString()),
+                SanitizeForLogging(userId) ?? "anonymous");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to log audit event: {EventType}", eventType);
+            _logger.LogError(ex, "Failed to log audit event: {EventType}", SanitizeForLogging(eventType.ToString()));
         }
     }
 }

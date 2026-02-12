@@ -116,7 +116,12 @@ builder.Services.AddRateLimiter(options =>
     options.OnRejected = (context, _) =>
     {
         var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-        logger.LogWarning("Rate limit hit for {Path} from {Ip}", context.HttpContext.Request.Path, context.HttpContext.Connection.RemoteIpAddress);
+        // Sanitize path to prevent log injection (remove control characters, newlines, null bytes)
+        var path = context.HttpContext.Request.Path.ToString()
+            .Replace("\n", "")
+            .Replace("\r", "")
+            .Replace("\0", "");
+        logger.LogWarning("Rate limit hit for {Path} from {Ip}", path, context.HttpContext.Connection.RemoteIpAddress);
         context.HttpContext.Response.Headers.RetryAfter = "60";
         return ValueTask.CompletedTask;
     };
@@ -149,6 +154,7 @@ builder.Services.AddHttpClient<IRecaptchaVerifier, RecaptchaVerifier>();
 builder.Services.AddSingleton<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
 builder.Services.AddScoped<IAuditLogger, AuditLogger>();
 builder.Services.AddScoped<ISessionManager, SessionManager>();
+builder.Services.AddScoped<IRecoveryCodeService, RecoveryCodeService>();
 builder.Services.AddHostedService<SessionCleanupService>();
 
 // Add HSTS (HTTP Strict Transport Security)
@@ -172,6 +178,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseMiddleware<SecurityHeadersMiddleware>();
 
 app.UseRateLimiter();
 

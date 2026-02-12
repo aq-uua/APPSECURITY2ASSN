@@ -20,6 +20,7 @@ public enum AuditEventType
     TwoFactorChallengeSucceeded,
     TwoFactorChallengeFailed,
     RecoveryCodesGenerated,
+    RecoveryCodeUsed,
     ProfileUpdated,
     DeliveryUpdated,
     PaymentUpdated,

@@ -117,10 +117,6 @@ public class ResetPasswordModel : PageModel
 
         var now = DateTime.UtcNow;
         user.PasswordLastChangedAt = now;
-        if (_passwordPolicy.MaxPasswordAgeDays > 0)
-        {
-            user.PasswordExpiresAt = now.AddDays(_passwordPolicy.MaxPasswordAgeDays);
-        }
 
         await _userManager.UpdateAsync(user);
         await _userManager.ResetAccessFailedCountAsync(user);

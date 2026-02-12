@@ -184,10 +184,6 @@ namespace WebApplication3.Pages
 
                 var now = DateTime.UtcNow;
                 user.PasswordLastChangedAt = now;
-                if (_passwordPolicy.MaxPasswordAgeDays > 0)
-                {
-                    user.PasswordExpiresAt = now.AddDays(_passwordPolicy.MaxPasswordAgeDays);
-                }
 
                 var updateResult = await _userManager.UpdateAsync(user);
                 if (!updateResult.Succeeded)
