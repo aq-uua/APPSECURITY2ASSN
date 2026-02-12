@@ -16,6 +16,21 @@ public class EmailSender : IEmailSender
         _logger = logger;
     }
 
+    private static string MaskEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email) || !email.Contains('@'))
+            return email ?? "null";
+        
+        var parts = email.Split('@');
+        var local = parts[0];
+        var domain = parts[1];
+        
+        if (local.Length <= 1)
+            return $"{local}***@{domain}";
+        
+        return $"{local[0]}***@{domain}";
+    }
+
     public async Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
         try
@@ -52,11 +67,11 @@ public class EmailSender : IEmailSender
 
             await client.SendMailAsync(mailMessage);
 
-            _logger.LogInformation("Email sent to {Email} subject={Subject}", email, subject);
+            _logger.LogInformation("Email sent to {Email} subject={Subject}", MaskEmail(email), subject);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email to {Email}", email);
+            _logger.LogError(ex, "Failed to send email to {Email}", MaskEmail(email));
             throw;
         }
     }

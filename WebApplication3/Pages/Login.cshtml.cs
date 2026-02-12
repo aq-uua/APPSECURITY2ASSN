@@ -124,7 +124,7 @@ namespace WebApplication3.Pages
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("User logged in: {Email}", email);
+                _logger.LogInformation("User logged in: {UserId}", user.Id);
                 
                 await _auditLogger.LogAuthEventAsync(
                     user.Id,
